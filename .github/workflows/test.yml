@@ -10,7 +10,6 @@ on:
 jobs:
   build:
     runs-on: ${{ matrix.os }}
-    continue-on-error: true
     strategy:
       fail-fast: false
       matrix:
@@ -18,10 +17,10 @@ jobs:
     steps:
       - name: Test wsl
         run: wsl -l -v
-        if: runner.os == 'Windows'
+        if: runner.os == 'Windows' && ${{ always() }}
       - name: Test docker on windows-latest
         run: docker run --rm hello-world
-        if: runner.os == 'Windows'
+        if: runner.os == 'Windows' && ${{ always() }}
       - name: Test docker via wsl on windows-latest
         run: wsl docker run --rm hello-world
-        if: runner.os == 'Windows'
+        if: runner.os == 'Windows' && ${{ always() }}
