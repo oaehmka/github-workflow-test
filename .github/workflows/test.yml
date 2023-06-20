@@ -16,7 +16,10 @@ jobs:
         os: [ windows-latest ]
     steps:
       - name: Test wsl
-        run: wsl -l -v
+        run: |
+              wsl --set-default-version 2
+              wsl --install -d Ubuntu
+              wsl -l -v
         if: runner.os == 'Windows' && ${{ always() }}
       - name: Test docker on windows-latest
         run: docker run --rm hello-world
