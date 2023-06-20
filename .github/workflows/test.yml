@@ -21,6 +21,9 @@ jobs:
       - name: Test docker on windows-latest
         run: docker run --rm hello-world
         if: runner.os == 'Windows' && ${{ always() }}
+      - name: Test linux docker container on windows-latest
+        run: docker run --rm ubuntu:latest echo test
+        if: runner.os == 'Windows' && ${{ always() }}
       - name: Test docker via wsl on windows-latest
         run: wsl docker run --rm hello-world
         if: runner.os == 'Windows' && ${{ always() }}
