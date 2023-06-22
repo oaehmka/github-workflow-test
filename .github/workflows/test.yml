@@ -18,7 +18,8 @@ jobs:
         os: [ windows-latest, ubuntu-latest ]
     steps:
       - name: Set env var
-        run: echo "args=yellow" >> "$GITHUB_ENV"
+        run: |
+          echo "args=yellow" >> "$GITHUB_ENV"
         if: runner.os == 'Windows'
 
       - name: Test command with env var
