@@ -15,27 +15,41 @@ jobs:
       matrix:
         os: [ windows-latest ]
     steps:
-      - name: dism.exe /online /enable-feature /featurename:Microsoft-Windows-Subsystem-Linux /all /norestart
-        run: dism.exe /online /enable-feature /featurename:Microsoft-Windows-Subsystem-Linux /all /norestart
+      - name: Install-WindowsFeature -Name Hyper-V,Containers -IncludeAllSubFeature -IncludeManagementTools
+        run: Install-WindowsFeature -Name Hyper-V,Containers -IncludeAllSubFeature -IncludeManagementTools
         if: runner.os == 'Windows' && ${{ always() }}
-      - name: dism.exe /online /enable-feature /featurename:VirtualMachinePlatform /all /norestart
-        run: dism.exe /online /enable-feature /featurename:VirtualMachinePlatform /all /norestart
+
+      - name: Environment
+        run: |
+              [Environment]::SetEnvironmentVariable(“LCOW_SUPPORTED”, “1”, “Machine”)
         if: runner.os == 'Windows' && ${{ always() }}
-      - name: wsl --set-default-version 2
-        run: wsl --set-default-version 2
+
+      - name: configfile
+        run: |
+              $configfile = @"
+              
+              {
+              
+                  "experimental": true
+              
+               }
+              
+              "@
+              $configfile|Out-File -FilePath C:\ProgramData\docker\config\daemon.json -Encoding ascii -Force
         if: runner.os == 'Windows' && ${{ always() }}
-      - name: Invoke-WebRequest -Uri https://aka.ms/wslubuntu2004 -OutFile Ubuntu.appx -UseBasicParsing
-        run: Invoke-WebRequest -Uri https://aka.ms/wslubuntu2004 -OutFile Ubuntu.appx -UseBasicParsing
+
+      - name: Invoke-WebRequest -Uri "https://github.com/linuxkit/lcow/releases/download/v4.14.35-v0.3.9/release.zip" -UseBasicParsing -OutFile release.zip
+        run: Invoke-WebRequest -Uri "https://github.com/linuxkit/lcow/releases/download/v4.14.35-v0.3.9/release.zip" -UseBasicParsing -OutFile release.zip
         if: runner.os == 'Windows' && ${{ always() }}
-      - name: wsl --install -d Ubuntu
-        run: wsl --install -d Ubuntu
+
+      - name: Expand-Archive release.zip -DestinationPath “$Env:ProgramFiles\Linux Containers\.”
+        run: Expand-Archive release.zip -DestinationPath “$Env:ProgramFiles\Linux Containers\.”
         if: runner.os == 'Windows' && ${{ always() }}
-      - name: wsl -l -v
-        run: wsl -l -v
+
+      - name: docker info
+        run: docker info
         if: runner.os == 'Windows' && ${{ always() }}
-      - name: Install docker via choco
-        run: choco install docker-desktop
-        if: runner.os == 'Windows' && ${{ always() }}
+
       - name: Test docker on windows-latest
         run: docker run --rm hello-world
         if: runner.os == 'Windows' && ${{ always() }}
