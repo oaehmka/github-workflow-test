@@ -10,50 +10,16 @@ on:
 jobs:
   build:
     runs-on: ${{ matrix.os }}
+    env:
+      args: ""
     strategy:
       fail-fast: false
       matrix:
-        os: [ windows-latest ]
+        os: [ windows-latest, ubuntu-latest ]
     steps:
-      - name: Install-WindowsFeature -Name Hyper-V,Containers -IncludeAllSubFeature -IncludeManagementTools
-        run: Install-WindowsFeature -Name Hyper-V,Containers -IncludeAllSubFeature -IncludeManagementTools
-        if: runner.os == 'Windows' && ${{ always() }}
+      - name: Set env var
+        run: echo "args=yellow" >> "$GITHUB_ENV"
+        if: runner.os == 'Windows'
 
-      - name: Environment
-        run: |
-              [Environment]::SetEnvironmentVariable(“LCOW_SUPPORTED”, “1”, “Machine”)
-        if: runner.os == 'Windows' && ${{ always() }}
-
-      - name: configfile
-        run: |
-              $configfile = @"
-              
-              {
-              
-                  "experimental": true
-              
-               }
-              
-              "@
-              $configfile|Out-File -FilePath C:\ProgramData\docker\config\daemon.json -Encoding ascii -Force
-        if: runner.os == 'Windows' && ${{ always() }}
-
-      - name: Invoke-WebRequest -Uri "https://github.com/linuxkit/lcow/releases/download/v4.14.35-v0.3.9/release.zip" -UseBasicParsing -OutFile release.zip
-        run: Invoke-WebRequest -Uri "https://github.com/linuxkit/lcow/releases/download/v4.14.35-v0.3.9/release.zip" -UseBasicParsing -OutFile release.zip
-        if: runner.os == 'Windows' && ${{ always() }}
-
-      - name: Expand-Archive release.zip -DestinationPath “$Env:ProgramFiles\Linux Containers\.”
-        run: Expand-Archive release.zip -DestinationPath “$Env:ProgramFiles\Linux Containers\.”
-        if: runner.os == 'Windows' && ${{ always() }}
-
-      - name: docker info
-        run: docker info
-        if: runner.os == 'Windows' && ${{ always() }}
-
-      - name: docker-machine restart
-        run: docker-machine restart
-        if: runner.os == 'Windows' && ${{ always() }}
-
-      - name: Test linux docker container on windows-latest
-        run: docker run --rm ubuntu:latest echo test
-        if: runner.os == 'Windows' && ${{ always() }}
+      - name: Test command with env var
+        run: echo {{ envvar }} test
