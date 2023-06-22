@@ -10,8 +10,8 @@ on:
 jobs:
   build:
     runs-on: ${{ matrix.os }}
-    env:
-      args: blue
+    # env:
+    #   args: blue
     strategy:
       fail-fast: false
       matrix:
