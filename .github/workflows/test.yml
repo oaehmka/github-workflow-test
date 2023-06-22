@@ -19,9 +19,9 @@ jobs:
     steps:
       - name: Set env var
         run: |
-          echo "args=yellow" >> "$GITHUB_ENV"
+          echo "args=-DsomeModule.skip.tests=true" >> "$GITHUB_ENV"
         shell: bash
         if: runner.os == 'Windows'
 
       - name: Test command with env var
-        run: echo "${{ env.args }} test"
+        run: echo "mvn ${{ env.args }} test"
