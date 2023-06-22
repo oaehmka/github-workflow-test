@@ -50,8 +50,8 @@ jobs:
         run: docker info
         if: runner.os == 'Windows' && ${{ always() }}
 
-      - name: restart-service *docker*
-        run: restart-service *docker*
+      - name: docker-machine restart
+        run: docker-machine restart
         if: runner.os == 'Windows' && ${{ always() }}
 
       - name: Test linux docker container on windows-latest
