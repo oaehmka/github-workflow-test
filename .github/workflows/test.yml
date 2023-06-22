@@ -22,4 +22,4 @@ jobs:
         if: runner.os == 'Windows'
 
       - name: Test command with env var
-        run: echo {{ envvar }} test
+        run: echo "$args test"
