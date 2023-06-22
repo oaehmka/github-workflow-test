@@ -20,6 +20,7 @@ jobs:
       - name: Set env var
         run: |
           echo "args=yellow" >> "$GITHUB_ENV"
+        shell: bash
         if: runner.os == 'Windows'
 
       - name: Test command with env var
