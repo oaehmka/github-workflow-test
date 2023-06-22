@@ -50,9 +50,10 @@ jobs:
         run: docker info
         if: runner.os == 'Windows' && ${{ always() }}
 
-      - name: Test docker on windows-latest
-        run: docker run --rm hello-world
+      - name: restart-service *docker*
+        run: restart-service *docker*
         if: runner.os == 'Windows' && ${{ always() }}
+
       - name: Test linux docker container on windows-latest
         run: docker run --rm ubuntu:latest echo test
         if: runner.os == 'Windows' && ${{ always() }}
